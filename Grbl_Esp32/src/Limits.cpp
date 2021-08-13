@@ -272,11 +272,18 @@ void limits_init() {
             if ((pin = limit_pins[axis][gang_index]) != UNDEFINED_PIN) {
                 pinMode(pin, mode);
                 limit_mask |= bit(axis);
+#ifdef USE_EXT_IO_PIN_LIMIT
+                if (pin < EXT_IN_PIN_BASE) {
+#endif
                 if (hard_limits->get()) {
                     attachInterrupt(pin, isr_limit_switches, CHANGE);
                 } else {
                     detachInterrupt(pin);
                 }
+
+#ifdef USE_EXT_IO_PIN_LIMIT
+                }   
+#endif
 
                 if (limit_sw_queue == NULL) {
                     grbl_msg_sendf(
@@ -305,6 +312,11 @@ void limits_disable() {
         for (int gang_index = 0; gang_index < 2; gang_index++) {
             uint8_t pin = limit_pins[axis][gang_index];
             if (pin != UNDEFINED_PIN) {
+#ifdef USE_EXT_IO_PIN_LIMIT
+                if (pin < EXT_IN_PIN_BASE) {
+                    continue ;
+                }
+#endif
                 detachInterrupt(pin);
             }
         }
@@ -370,7 +382,7 @@ void limitCheckTask(void* pvParameters) {
         AxisMask switch_state;
         switch_state = limits_get_state();
         if (switch_state) {
-            grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Debug, "Limit Switch State %08d", switch_state);
+            grbl_msg_sendf(CLIENT_SERIAL, MsgLevel::Info, "Limit Switch State %08d", switch_state);
             mc_reset();                                // Initiate system kill.
             sys_rt_exec_alarm = ExecAlarm::HardLimit;  // Indicate hard limit critical event
         }

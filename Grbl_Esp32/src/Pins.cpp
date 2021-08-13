@@ -8,6 +8,11 @@ String pinName(uint8_t pin) {
     if (pin < I2S_OUT_PIN_BASE) {
         return String("GPIO(") + pin + ")";
     } else {
+#ifdef USE_EXT_IO_PIN_LIMIT
+        if (pin >= EXT_IN_PIN_BASE) {
+            return String("EXT_IO(") + (pin - EXT_IN_PIN_BASE) + ")";
+        }
+#endif
         return String("I2SO(") + (pin - I2S_OUT_PIN_BASE) + ")";
     }
 }
@@ -25,6 +30,13 @@ void IRAM_ATTR digitalWrite(uint8_t pin, uint8_t val) {
         __digitalWrite(pin, val);
         return;
     }
+
+#ifdef USE_EXT_IO_PIN_LIMIT
+    if (pin >= EXT_IN_PIN_BASE) {
+        return;
+    }
+#endif
+
 #ifdef USE_I2S_OUT
     i2s_out_write(pin - I2S_OUT_PIN_BASE, val);
 #endif
@@ -45,9 +57,18 @@ int IRAM_ATTR digitalRead(uint8_t pin) {
     if (pin == UNDEFINED_PIN) {
         return 0;
     }
+
     if (pin < I2S_OUT_PIN_BASE) {
         return __digitalRead(pin);
     }
+
+#ifdef USE_EXT_IO_PIN_LIMIT
+    if (pin >= EXT_IN_PIN_BASE) {
+        extern uint8_t getExtIOStatus(uint8_t pin_in);
+        return getExtIOStatus(pin);
+    }
+#endif
+
 #ifdef USE_I2S_OUT
     return i2s_out_read(pin - I2S_OUT_PIN_BASE);
 #else

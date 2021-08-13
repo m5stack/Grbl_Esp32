@@ -19,9 +19,21 @@
 */
 
 #include "src/Grbl.h"
+#include "src/UserBoard.h"
+#include "Wire.h"
+#include "M5Stack.h"
+
+extern void userBoardInit(); 
 
 void setup() {
+    M5.begin(true, false, false, false);
+    M5.Lcd.clear(TFT_BLACK);
+    M5.Lcd.setTextSize(2);
+    M5.Lcd.setTextColor(TFT_GREEN);
+    M5.Lcd.setTextDatum(MC_DATUM);
+    M5.Lcd.drawString("GRBL", 160, 120, 4);
     grbl_init();
+    userBoardInit();
 }
 
 void loop() {

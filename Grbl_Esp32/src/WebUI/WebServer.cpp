@@ -992,13 +992,13 @@ namespace WebUI {
                         if (upload.currentSize != fsUploadFile.write(upload.buf, upload.currentSize)) {
                             _upload_status = UploadStatusType::FAILED;
                             grbl_send(CLIENT_ALL, "[MSG:Upload error]\r\n");
-                            pushError(ESP_ERROR_FILE_WRITE, "File write failed");
+                            pushError(ESP_ERROR_FILE_WRITE, "File write failed 1");
                         }
                     } else {
                         //we have a problem set flag UploadStatusType::FAILED
                         _upload_status = UploadStatusType::FAILED;
                         grbl_send(CLIENT_ALL, "[MSG:Upload error]\r\n");
-                        pushError(ESP_ERROR_FILE_WRITE, "File write failed");
+                        pushError(ESP_ERROR_FILE_WRITE, "File write failed 2");
                     }
                     //Upload end
                     //**************
@@ -1141,7 +1141,7 @@ namespace WebUI {
                         if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
                             _upload_status = UploadStatusType::FAILED;
                             grbl_send(CLIENT_ALL, "[MSG:Update write failed]\r\n");
-                            pushError(ESP_ERROR_FILE_WRITE, "File write failed");
+                            pushError(ESP_ERROR_FILE_WRITE, "File write failed 3");
                         }
                     }
                     //Upload end
@@ -1481,12 +1481,12 @@ namespace WebUI {
                         if (upload.currentSize != sdUploadFile.write(upload.buf, upload.currentSize)) {
                             _upload_status = UploadStatusType::FAILED;
                             grbl_send(CLIENT_ALL, "[MSG:Upload failed]\r\n");
-                            pushError(ESP_ERROR_FILE_WRITE, "File write failed");
+                            pushError(ESP_ERROR_FILE_WRITE, "File write failed 4");
                         }
                     } else {  //if error set flag UploadStatusType::FAILED
                         _upload_status = UploadStatusType::FAILED;
                         grbl_send(CLIENT_ALL, "[MSG:Upload failed]\r\n");
-                        pushError(ESP_ERROR_FILE_WRITE, "File write failed");
+                        pushError(ESP_ERROR_FILE_WRITE, "File write failed 5");
                     }
                     //Upload end
                     //**************
